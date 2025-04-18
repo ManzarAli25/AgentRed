@@ -11,12 +11,12 @@ from langgraph.graph import START, StateGraph
 from langgraph.prebuilt import tools_condition 
 from langgraph.prebuilt import ToolNode
 import re
+import streamlit as st
 
-load_dotenv()
+GOOGLE_KEY = st.secrets["GOOGLE_API_KEY"]
+PRAW_SECRET = st.secrets["REDDIT_CLIENT_SECRET"]
+PRAW_CLIENT = st.secrets["REDDIT_CLIENT_ID"]
 
-GOOGLE_KEY = os.getenv("GOOGLE_API_KEY")
-PRAW_SECRET = os.getenv("REDDIT_CLIENT_SECRET")
-PRAW_CLIENT = os.getenv("REDDIT_CLIENT_ID")
 
 
 def get_gemini_client():
@@ -26,6 +26,7 @@ def get_gemini_client():
         max_tokens=None,
         timeout=None,
         max_retries=2,
+        google_api_key = GOOGLE_KEY
     )
 
 @tool
