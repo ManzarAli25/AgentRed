@@ -16,8 +16,9 @@ import streamlit as st
 GOOGLE_KEY = st.secrets["GOOGLE_API_KEY"]
 PRAW_SECRET = st.secrets["REDDIT_CLIENT_SECRET"]
 PRAW_CLIENT = st.secrets["REDDIT_CLIENT_ID"]
-
-
+# GOOGLE_KEY = os.getenv("GOOGLE_API_KEY")
+# PRAW_SECRET = os.getenv("REDDIT_CLIENT_SECRET")
+# PRAW_CLIENT = os.getenv("REDDIT_CLIENT_ID")
 
 def get_gemini_client():
     return ChatGoogleGenerativeAI(
@@ -26,7 +27,7 @@ def get_gemini_client():
         max_tokens=None,
         timeout=None,
         max_retries=2,
-        google_api_key = GOOGLE_KEY
+        google_api_key=GOOGLE_KEY
     )
 
 @tool
@@ -280,12 +281,13 @@ def run_debate(support_chain, counter_chain, num_rounds=5):
     for round_num in range(num_rounds):  # Add more rounds as needed
         # Support rebuttal
         support_rebuttal = support_chain.invoke({"debate_history": debate_history})
+        print(f"Round {round_num + 1} - SUPPORT:\n{support_rebuttal.content}\n{'='*50}\n")
         debate_history.append(AIMessage(content=support_rebuttal.content))
 
         # Counter rebuttal
         counter_rebuttal = counter_chain.invoke({"debate_history": debate_history})
+        print(f"Round {round_num + 1} - COUNTER:\n{counter_rebuttal.content}\n{'='*50}\n")
         debate_history.append(AIMessage(content=counter_rebuttal.content))
-
 
     return debate_history
 
@@ -324,23 +326,23 @@ def evaluate_debate(debate_history):
 
 
 # Example topic
-# topic = "climate change"
+topic = "climate change"
 
-# # Step 1: Extract Opinions from Reddit
-# messages, extracted_output = extract_opinions(topic)
+# Step 1: Extract Opinions from Reddit
+messages, extracted_output = extract_opinions(topic)
 
-# # Step 2: Parse Debate Output to Extract Key Details
-# debate_axis, opinion_1, opinion_2 = parse_debate_output(extracted_output.content)
+# Step 2: Parse Debate Output to Extract Key Details
+debate_axis, opinion_1, opinion_2 = parse_debate_output(extracted_output.content)
 
-# # Step 3: Create Chains for Both Support and Counter Arguments
-# support_chain = create_support_chain(debate_axis, opinion_1)
-# counter_chain = create_counter_chain(debate_axis, opinion_2)
+# Step 3: Create Chains for Both Support and Counter Arguments
+support_chain = create_support_chain(debate_axis, opinion_1)
+counter_chain = create_counter_chain(debate_axis, opinion_2)
 
-# # Step 4: Run the Debate (with 5 rounds)
-# debate_history = run_debate(support_chain, counter_chain, num_rounds=5)
+# Step 4: Run the Debate (with 5 rounds)
+debate_history = run_debate(support_chain, counter_chain, num_rounds=5)
 
-# # Step 5: Get the Judgment (Who won the debate?)
-# debate_judgment = evaluate_debate(debate_history)
+# Step 5: Get the Judgment (Who won the debate?)
+debate_judgment = evaluate_debate(debate_history)
 
-# # Print the Final Judgment
-# print(debate_judgment)
+# Print the Final Judgment
+print(debate_judgment)
