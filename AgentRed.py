@@ -280,12 +280,10 @@ def run_debate(support_chain, counter_chain, num_rounds=5):
         # Support rebuttal
         support_rebuttal = support_chain.invoke({"debate_history": debate_history})
         debate_history.append(AIMessage(content=support_rebuttal.content))
-        print(f"SUPPORT REBUTTAL {round_num+1}:\n{support_rebuttal.content}\n{'='*50}\n")
 
         # Counter rebuttal
         counter_rebuttal = counter_chain.invoke({"debate_history": debate_history})
         debate_history.append(AIMessage(content=counter_rebuttal.content))
-        print(f"COUNTER REBUTTAL {round_num+1}:\n{counter_rebuttal.content}\n{'='*50}\n")
 
 
     return debate_history
