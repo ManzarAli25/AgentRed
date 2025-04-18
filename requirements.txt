@@ -8,5 +8,4 @@ langchain-core
 langgraph
 streamlit
 google-generativeai
-re
 streamlit-extras
